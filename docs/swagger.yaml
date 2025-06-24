@@ -1,0 +1,209 @@
+basePath: /
+definitions:
+  entity.CreatePersonRequest:
+    properties:
+      name:
+        type: string
+      patronymic:
+        type: string
+      surname:
+        type: string
+    required:
+    - name
+    - surname
+    type: object
+  entity.Person:
+    properties:
+      age:
+        maximum: 120
+        minimum: 0
+        type: integer
+      gender:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      nationalities:
+        items:
+          type: string
+        type: array
+      patronymic:
+        type: string
+      surname:
+        type: string
+    required:
+    - age
+    - gender
+    - name
+    - nationalities
+    - surname
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API для обработки и обогащения персональных данных
+  title: Task Eff Mobile API
+  version: "1.0"
+paths:
+  /people:
+    get:
+      description: Получение списка людей с фильтрами и пагинацией
+      parameters:
+      - description: Фильтр по имени
+        in: query
+        name: name
+        type: string
+      - description: Фильтр по фамилии
+        in: query
+        name: surname
+        type: string
+      - description: Пол
+        in: query
+        name: gender
+        type: string
+      - description: Мин. возраст
+        in: query
+        name: age_min
+        type: integer
+      - description: Макс. возраст
+        in: query
+        name: age_max
+        type: integer
+      - description: Страница
+        in: query
+        name: page
+        type: integer
+      - description: Лимит
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Person'
+            type: array
+      summary: Получить список людей
+      tags:
+      - people
+    post:
+      consumes:
+      - application/json
+      description: Добавляет человека и обогащает его через внешние API
+      parameters:
+      - description: Данные человека
+        in: body
+        name: person
+        required: true
+        schema:
+          $ref: '#/definitions/entity.CreatePersonRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.Person'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Добавить нового человека
+      tags:
+      - people
+  /people/{id}:
+    delete:
+      description: Удаляет человека по ID
+      parameters:
+      - description: ID человека
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить человека
+      tags:
+      - people
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные человека по ID
+      parameters:
+      - description: ID человека
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Обновлённые данные
+        in: body
+        name: person
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Person'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить данные человека
+      tags:
+      - people
+swagger: "2.0"
